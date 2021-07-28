@@ -9,40 +9,40 @@ import io.smallrye.config.ConfigMapping;
 @ConfigMapping(prefix = "remote")
 public class RemoteServerConfig {
 
-    private String remoteServer;
-    private Integer remoteServerResolution;
-    private String remoteServerConnectionProtocol;
-    private String remoteServerModes;
+    private String server;
+    private Integer serverResolution;
+    private String serverConnectionProtocol;
+    private Integer workerThreads;
 
-    public String getRemoteServer() {
-        return remoteServer;
+    public String getServer() {
+        return server;
     }
 
-    public void setRemoteServer(String remoteServer) {
-        this.remoteServer = remoteServer;
+    public void setServer(String server) {
+        this.server = server;
     }
 
-    public Integer getRemoteServerResolution() {
-        return remoteServerResolution;
+    public Integer getServerResolution() {
+        return serverResolution;
     }
 
-    public void setRemoteServerResolution(Integer remoteServerResolution) {
-        this.remoteServerResolution = remoteServerResolution;
+    public void setServerResolution(Integer serverResolution) {
+        this.serverResolution = serverResolution;
     }
 
-    public String getRemoteServerConnectionProtocol() {
-        return remoteServerConnectionProtocol;
+    public String getServerConnectionProtocol() {
+        return serverConnectionProtocol;
     }
 
-    public void setRemoteServerConnectionProtocol(String remoteServerConnectionProtocol) {
-        this.remoteServerConnectionProtocol = remoteServerConnectionProtocol;
+    public void setServerConnectionProtocol(String serverConnectionProtocol) {
+        this.serverConnectionProtocol = serverConnectionProtocol;
     }
 
-    public String getRemoteServerModes() {
-        return remoteServerModes;
+    public Integer getWorkerThreads() {
+        return workerThreads;
     }
 
-    public void setRemoteServerModes(String remoteServerModes) {
-        this.remoteServerModes = remoteServerModes;
+    public void setWorkerThreads(Integer workerThreads) {
+        this.workerThreads = workerThreads;
     }
 }
