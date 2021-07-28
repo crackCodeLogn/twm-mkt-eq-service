@@ -51,6 +51,7 @@ public class ComputeEngine {
 
     public void destroyExecutor() {
         if (computeEngine != null && !computeEngine.isShutdown()) {
+            log.info("Shutting down Compute engine");
             computeEngine.shutdown();
         }
     }

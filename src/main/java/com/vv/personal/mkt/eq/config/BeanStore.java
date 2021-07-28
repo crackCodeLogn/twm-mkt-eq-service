@@ -29,7 +29,7 @@ public class BeanStore {
         );
     }
 
-    @Bean
+    @Bean(destroyMethod = "destroyExecutor")
     public OrchestratorEngine OrchestratorEngine() {
         EquitiesMarketProto.Holdings.Builder holdings = EquitiesMarketProto.Holdings.newBuilder();
 
@@ -50,7 +50,7 @@ public class BeanStore {
         );
     }
 
-    @Bean
+    @Bean(destroyMethod = "destroyExecutor")
     public ComputeEngine ComputeEngine() {
         return new ComputeEngine(equitiesMarketConfig.getComputeWorkerThreads());
     }

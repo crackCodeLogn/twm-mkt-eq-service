@@ -31,7 +31,8 @@ public class OrchestratorEngine {
         this.computeEngine = computeEngine;
 
         scheduledEngine = Executors.newScheduledThreadPool(workerThreadCount);
-        scheduledEngine.scheduleWithFixedDelay(this::invokeEngine, 0, executionIntervalInSeconds, TimeUnit.SECONDS);
+        scheduledEngine.scheduleWithFixedDelay(this::invokeEngine, executionIntervalInSeconds, executionIntervalInSeconds, TimeUnit.SECONDS);
+        //initial delay as Starter calls invokeEngine() directly on startup
     }
 
     public void invokeEngine() {
@@ -45,6 +46,13 @@ public class OrchestratorEngine {
             log.info("Live PnL => \n{}\n", livePnLs);
         } else {
             log.warn("!!! NO LIVE PNL COMPUTED in this iteration !!!");
+        }
+    }
+
+    public void destroyExecutor() {
+        if (scheduledEngine != null && !scheduledEngine.isShutdown()) {
+            log.info("Shutting down scheduled orchestrator engine");
+            scheduledEngine.shutdown();
         }
     }
 

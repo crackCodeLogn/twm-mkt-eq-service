@@ -5,9 +5,8 @@ import com.vv.personal.mkt.eq.responses.IntraPnL;
 import com.vv.personal.twm.artifactory.generated.equitiesMarket.EquitiesMarketProto;
 import feign.Feign;
 import feign.gson.GsonDecoder;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,8 +16,8 @@ import java.util.concurrent.*;
  * @author Vivek
  * @since 28/07/21
  */
+@Slf4j
 public class NetworkEngine {
-    private static final Logger LOGGER = LoggerFactory.getLogger(NetworkEngine.class);
 
     private final ExecutorService networkExecutor;
     private final String targetUrlBase;
@@ -39,7 +38,7 @@ public class NetworkEngine {
                     intraPnLS.add(livePnL);
                 }
             } catch (InterruptedException | ExecutionException e) {
-                LOGGER.error("Failed to get response from remote source for symbol '{}'.", holding.getSymbol(), e);
+                log.error("Failed to get response from remote source for symbol '{}'.", holding.getSymbol(), e);
             }
         });
         return intraPnLS;
@@ -50,10 +49,10 @@ public class NetworkEngine {
             PnLClient pnLClient = Feign.builder()
                     .decoder(new GsonDecoder())
                     .target(PnLClient.class, targetUrlBase);
-            LOGGER.debug("Generated PnLClient: {}", pnLClient);
+            log.debug("Generated PnLClient: {}", pnLClient);
 
             IntraPnL intraPnL = pnLClient.getIntraPnL(holding.getSymbol(), resolution, start, end);
-            LOGGER.debug("Received intra PNL data: {}", intraPnL);
+            log.debug("Received intra PNL data: {}", intraPnL);
             if (!intraPnL.getData().isEmpty()) {
                 return intraPnL;
             }
@@ -63,6 +62,7 @@ public class NetworkEngine {
 
     public void destroyExecutor() {
         if (networkExecutor != null && !networkExecutor.isShutdown()) {
+            log.info("Shutting down network engine");
             networkExecutor.shutdown();
         }
     }
