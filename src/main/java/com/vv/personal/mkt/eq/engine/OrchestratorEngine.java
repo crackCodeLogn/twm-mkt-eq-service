@@ -35,6 +35,7 @@ public class OrchestratorEngine {
         this.computeEngine = computeEngine;
 
         scheduledEngine = Executors.newScheduledThreadPool(workerThreadCount);
+        log.info("Initiating scheduled-engine with execution interval of {} seconds", executionIntervalInSeconds);
         scheduledEngine.scheduleWithFixedDelay(this::invokeEngine, executionIntervalInSeconds, executionIntervalInSeconds, TimeUnit.SECONDS);
         //initial delay as Starter calls invokeEngine() directly on startup
     }
