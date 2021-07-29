@@ -28,6 +28,7 @@ public class NetworkEngine {
     }
 
     public List<IntraPnL> invokeEngine(EquitiesMarketProto.Holdings holdings, Integer resolution, Long start, Long end) {
+        log.debug("Network engine invoked from {} to {}", start, end);
         List<IntraPnL> intraPnLS = new ArrayList<>(holdings.getHoldingsCount());
         holdings.getHoldingsList().forEach(holding -> {
             Future<IntraPnL> livePnLFuture = networkExecutor.submit(generateLivePnLData(holding, resolution, start, end));

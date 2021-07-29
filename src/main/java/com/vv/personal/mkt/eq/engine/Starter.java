@@ -25,7 +25,7 @@ public class Starter {
 
         beanStore.OrchestratorEngine().invokeEngine();
 
-        log.info("*** Shutting Down! ***");
-        Quarkus.asyncExit();
+        //log.info("*** Shutting Down! ***");
+        //Quarkus.asyncExit();
     }
 }

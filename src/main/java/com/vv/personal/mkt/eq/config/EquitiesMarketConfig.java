@@ -9,17 +9,17 @@ import io.smallrye.config.ConfigMapping;
 @ConfigMapping(prefix = "equity")
 public class EquitiesMarketConfig {
 
-    private String symbolsFileLocation;
+    private String holdingsFileLocation;
     private Integer orchestratorWorkerThreads;
     private Integer computeWorkerThreads;
     private Integer executionIntervalDuration;
 
-    public String getSymbolsFileLocation() {
-        return symbolsFileLocation;
+    public String getHoldingsFileLocation() {
+        return holdingsFileLocation;
     }
 
-    public void setSymbolsFileLocation(String symbolsFileLocation) {
-        this.symbolsFileLocation = symbolsFileLocation;
+    public void setHoldingsFileLocation(String holdingsFileLocation) {
+        this.holdingsFileLocation = holdingsFileLocation;
     }
 
     public Integer getOrchestratorWorkerThreads() {

@@ -3,6 +3,7 @@ package com.vv.personal.mkt.eq.config;
 import com.vv.personal.mkt.eq.engine.ComputeEngine;
 import com.vv.personal.mkt.eq.engine.NetworkEngine;
 import com.vv.personal.mkt.eq.engine.OrchestratorEngine;
+import com.vv.personal.mkt.eq.reader.HoldingsReader;
 import com.vv.personal.twm.artifactory.generated.equitiesMarket.EquitiesMarketProto;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,6 +22,11 @@ public class BeanStore {
     @Inject
     EquitiesMarketConfig equitiesMarketConfig;
 
+    @Bean
+    public HoldingsReader HoldingsReader() {
+        return new HoldingsReader(equitiesMarketConfig.getHoldingsFileLocation());
+    }
+
     @Bean(destroyMethod = "destroyExecutor")
     public NetworkEngine NetworkEngine() {
         return new NetworkEngine(
@@ -31,20 +37,13 @@ public class BeanStore {
 
     @Bean(destroyMethod = "destroyExecutor")
     public OrchestratorEngine OrchestratorEngine() {
-        EquitiesMarketProto.Holdings.Builder holdings = EquitiesMarketProto.Holdings.newBuilder();
-
-        //TODO -- remove this post local testing from main
-        EquitiesMarketProto.Holding holding = EquitiesMarketProto.Holding.newBuilder()
-                .setSymbol("IOC")
-                .setQty(10)
-                .setBuyRate(110.35)
-                .build();
-        holdings.addHoldings(holding);
+        EquitiesMarketProto.Holdings holdings = HoldingsReader().readInHoldings();
 
         return new OrchestratorEngine(
-                holdings.build(),
+                holdings,
                 equitiesMarketConfig.getOrchestratorWorkerThreads(),
                 equitiesMarketConfig.getExecutionIntervalDuration(),
+                remoteServerConfig.getServerResolution(),
                 NetworkEngine(),
                 ComputeEngine()
         );

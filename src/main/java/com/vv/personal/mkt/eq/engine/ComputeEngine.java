@@ -39,14 +39,18 @@ public class ComputeEngine {
             double currentTotal = latest.getValue() * holding.getQty();
             double diff = currentTotal - holdingTotal;
             double diffPercent = (diff / holdingTotal) * 100;
-            livePnLBuilder.setDiff(diff);
-            livePnLBuilder.setCurrentRate(latest.getValue());
-            livePnLBuilder.setDiffPercent(diffPercent);
+            livePnLBuilder.setDiff(roundOff(diff));
+            livePnLBuilder.setCurrentRate(roundOff(latest.getValue()));
+            livePnLBuilder.setDiffPercent(roundOff(diffPercent));
             livePnLBuilder.setHolding(holding);
             stopWatch.stop();
             log.debug("Compute took {} ms", stopWatch.getTime(TimeUnit.MILLISECONDS));
             return livePnLBuilder.build();
         };
+    }
+
+    static Double roundOff(double value) {
+        return (double) Math.round(value * 1000d) / 1000d;
     }
 
     public void destroyExecutor() {

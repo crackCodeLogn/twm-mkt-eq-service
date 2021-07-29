@@ -24,8 +24,13 @@ class OrchestratorEngineTest {
         NetworkEngine networkEngine = new NetworkEngine("https://priceapi.moneycontrol.com/techCharts", 1);
         ComputeEngine computeEngine = new ComputeEngine(8);
 
-        OrchestratorEngine orchestratorEngine = new OrchestratorEngine(holdingsBuilder.build(), 1, 30, networkEngine, computeEngine);
+        OrchestratorEngine orchestratorEngine = new OrchestratorEngine(holdingsBuilder.build(), 1, 30, 1, networkEngine, computeEngine);
         orchestratorEngine.invokeEngine();
+    }
+
+    @Test
+    public void testInflateWithSpace() {
+        assertEquals("ABC       ", OrchestratorEngine.inflateWithSpace("ABC", 10));
     }
 
 }
