@@ -5,6 +5,7 @@ import com.vv.personal.mkt.eq.responses.IntraPnL;
 import com.vv.personal.twm.artifactory.generated.equitiesMarket.EquitiesMarketProto;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -51,7 +52,7 @@ public class OrchestratorEngine {
                             computeEngine.invokeLivePnLComputeEngine(intraPnL.getHolding(), intraPnL)
                     ));
 
-            AtomicDouble subTotal = new AtomicDouble(0.0);
+            AtomicDouble pnLSubTotal = new AtomicDouble(0.0);
             AtomicInteger maxSymbolLength = new AtomicInteger(0);
             livePnLs.getLivePnLsList().forEach(livePnL ->
                     maxSymbolLength.set(Math.max(maxSymbolLength.get(), livePnL.getHolding().getSymbol().length()))
@@ -60,15 +61,16 @@ public class OrchestratorEngine {
             livePnLs.getLivePnLsList().forEach(livePnL -> {
                 String data = String.format("%s\t%s\t%s\t%s\t%s\t%s",
                         inflateWithSpace(livePnL.getHolding().getSymbol(), maxSymbolLength.get()),
-                        livePnL.getCurrentRate(),
-                        livePnL.getHolding().getQty(),
                         livePnL.getHolding().getBuyRate(),
+                        livePnL.getHolding().getQty(),
+                        livePnL.getCurrentRate(),
                         livePnL.getDiff(),
                         livePnL.getDiffPercent());
-                System.out.println(data);
-                subTotal.addAndGet(livePnL.getDiff());
+                System.out.println(data); //direct output to prevent logger clutter
+                pnLSubTotal.addAndGet(livePnL.getDiff());
             });
-            System.out.printf("Total diff subtotal: %.2f\n*********\n", subTotal.get());
+            System.out.printf("Total PnL: %.3f\n", pnLSubTotal.get()); //direct output to prevent logger clutter
+            System.out.printf("Time: %s\n*********\n", Calendar.getInstance().getTime()); //direct output to prevent logger clutter
         } else {
             log.warn("!!! NO LIVE PNL COMPUTED in this iteration !!!");
         }
