@@ -13,7 +13,7 @@ class HoldingsReaderTest {
 
     @Test
     public void testHoldingsReader() {
-        HoldingsReader holdingsReader = new HoldingsReader("src/test/resources/landing/holdings.csv");
+        HoldingsReader holdingsReader = new HoldingsReader("src/test/resources/test_landing/holdings.csv");
         EquitiesMarketProto.Holdings holdings = holdingsReader.readInHoldings();
         System.out.println(holdings);
         assertEquals("XYZ", holdings.getHoldingsList().get(0).getSymbol());
