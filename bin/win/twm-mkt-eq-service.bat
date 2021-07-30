@@ -8,4 +8,4 @@ set JAR_PATH="%BIN_PATH%/../target/quarkus-app/quarkus-run.jar"
 set APP_PARAMS="-Dequity.holdingsFileLocation=%BIN_PATH%/../landing/holdings.csv -Dequity.executionIntervalDuration=$1"
 
 echo "Starting %APP_NAME% with java param: %JAVA_PARAM%, app params: %APP_PARAMS% at %JAR_PATH%"
-java %JAVA_PARAM% %APP_PARAMS% -jar %JAR_PATH%
+java %JAVA_PARAM% -Dequity.holdingsFileLocation=%BIN_PATH%/../landing/holdings.csv -Dequity.executionIntervalDuration=%1 -jar %JAR_PATH%
