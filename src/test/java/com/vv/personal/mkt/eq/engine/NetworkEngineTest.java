@@ -1,13 +1,5 @@
 package com.vv.personal.mkt.eq.engine;
 
-import com.vv.personal.mkt.eq.responses.IntraPnL;
-import com.vv.personal.twm.artifactory.generated.equitiesMarket.EquitiesMarketProto;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * @author Vivek
  * @since 28-07-2021

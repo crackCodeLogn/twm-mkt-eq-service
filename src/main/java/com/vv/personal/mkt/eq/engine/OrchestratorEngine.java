@@ -1,7 +1,8 @@
 package com.vv.personal.mkt.eq.engine;
 
 import com.google.common.util.concurrent.AtomicDouble;
-import com.vv.personal.mkt.eq.responses.IntraPnL;
+import com.vv.personal.mkt.eq.modes.Mode;
+import com.vv.personal.mkt.eq.responses.PnL;
 import com.vv.personal.twm.artifactory.generated.equitiesMarket.EquitiesMarketProto;
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,10 +45,20 @@ public class OrchestratorEngine {
     public void invokeEngine() {
         long endTime = System.currentTimeMillis() / 1000 - 10;
         long startTime = endTime - executionIntervalInSeconds;
-        List<IntraPnL> intraPnLS = networkEngine.invokeEngine(holdings, resolution, startTime, endTime);
-        if (!intraPnLS.isEmpty()) {
+
+        Mode mode;
+        int hourOfDay = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        int minute = Calendar.getInstance().get(Calendar.MINUTE);
+        int time = hourOfDay * 100 + minute;
+        if (time >= 930 && time <= 1530) mode = Mode.INTRA;
+        else mode = Mode.HISTORIC;
+
+        mode = Mode.INTRA; //TODO -- forcing to INTRA for now, as it seems uncertain for HISTORIC
+
+        List<PnL> pnLS = networkEngine.invokeEngine(holdings, resolution, startTime, endTime, mode);
+        if (!pnLS.isEmpty()) {
             EquitiesMarketProto.LivePnLs.Builder livePnLs = EquitiesMarketProto.LivePnLs.newBuilder();
-            intraPnLS.forEach(intraPnL ->
+            pnLS.forEach(intraPnL ->
                     livePnLs.addLivePnLs(
                             computeEngine.invokeLivePnLComputeEngine(intraPnL.getHolding(), intraPnL)
                     ));
@@ -72,7 +83,7 @@ public class OrchestratorEngine {
             System.out.printf("Total PnL: %.3f\n", pnLSubTotal.get()); //direct output to prevent logger clutter
             System.out.printf("Time: %s\n*********\n", Calendar.getInstance().getTime()); //direct output to prevent logger clutter
         } else {
-            log.warn("!!! NO LIVE PNL COMPUTED in this iteration !!!");
+            log.warn("!!! NO PNL COMPUTED in this iteration !!!");
         }
     }
 

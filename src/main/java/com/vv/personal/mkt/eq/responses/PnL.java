@@ -6,7 +6,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.util.List;
 
-public class IntraPnL {
+public class PnL {
     private String s;
     private List<Data> data;
     private EquitiesMarketProto.Holding holding;

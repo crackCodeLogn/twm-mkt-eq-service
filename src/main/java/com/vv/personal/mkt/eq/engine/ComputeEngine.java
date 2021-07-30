@@ -1,6 +1,6 @@
 package com.vv.personal.mkt.eq.engine;
 
-import com.vv.personal.mkt.eq.responses.IntraPnL;
+import com.vv.personal.mkt.eq.responses.PnL;
 import com.vv.personal.twm.artifactory.generated.equitiesMarket.EquitiesMarketProto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
@@ -20,8 +20,8 @@ public class ComputeEngine {
         this.computeEngine = Executors.newFixedThreadPool(computeThreadCount);
     }
 
-    public EquitiesMarketProto.LivePnL invokeLivePnLComputeEngine(EquitiesMarketProto.Holding holding, IntraPnL intraPnL) {
-        IntraPnL.Data latestIntraPnL = intraPnL.getData().get(intraPnL.getData().size() - 1);
+    public EquitiesMarketProto.LivePnL invokeLivePnLComputeEngine(EquitiesMarketProto.Holding holding, PnL pnL) {
+        PnL.Data latestIntraPnL = pnL.getData().get(pnL.getData().size() - 1);
         try {
             return computeEngine.submit(compute(holding, latestIntraPnL)).get();
         } catch (InterruptedException | ExecutionException e) {
@@ -30,7 +30,7 @@ public class ComputeEngine {
         return EquitiesMarketProto.LivePnL.newBuilder().build();
     }
 
-    private Callable<EquitiesMarketProto.LivePnL> compute(EquitiesMarketProto.Holding holding, IntraPnL.Data latest) {
+    private Callable<EquitiesMarketProto.LivePnL> compute(EquitiesMarketProto.Holding holding, PnL.Data latest) {
         return () -> {
             StopWatch stopWatch = new StopWatch();
             stopWatch.start();
