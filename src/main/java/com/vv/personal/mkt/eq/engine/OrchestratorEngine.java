@@ -64,9 +64,13 @@ public class OrchestratorEngine {
                     ));
 
             AtomicDouble pnLSubTotal = new AtomicDouble(0.0);
+            AtomicDouble investedTotal = new AtomicDouble(0.0);
             AtomicInteger maxSymbolLength = new AtomicInteger(0);
             livePnLs.getLivePnLsList().forEach(livePnL ->
-                    maxSymbolLength.set(Math.max(maxSymbolLength.get(), livePnL.getHolding().getSymbol().length()))
+                    {
+                        maxSymbolLength.set(Math.max(maxSymbolLength.get(), livePnL.getHolding().getSymbol().length()));
+                        investedTotal.addAndGet(livePnL.getHolding().getQty() * livePnL.getHolding().getBuyRate());
+                    }
             );
 
             livePnLs.getLivePnLsList().forEach(livePnL -> {
@@ -80,7 +84,8 @@ public class OrchestratorEngine {
                 System.out.println(data); //direct output to prevent logger clutter
                 pnLSubTotal.addAndGet(livePnL.getDiff());
             });
-            System.out.printf("Total PnL: %.3f\n", pnLSubTotal.get()); //direct output to prevent logger clutter
+            double currentRateOfReturn = (pnLSubTotal.get() / investedTotal.get()) * 100;
+            System.out.printf("Total PnL: %.3f  ::  Current rate of return: %.3f\n", pnLSubTotal.get(), currentRateOfReturn); //direct output to prevent logger clutter
             System.out.printf("Time: %s\n*********\n", Calendar.getInstance().getTime()); //direct output to prevent logger clutter
         } else {
             log.warn("!!! NO PNL COMPUTED in this iteration !!!");
