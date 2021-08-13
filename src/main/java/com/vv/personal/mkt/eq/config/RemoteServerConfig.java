@@ -7,42 +7,15 @@ import io.smallrye.config.ConfigMapping;
  * @since 28/07/21
  */
 @ConfigMapping(prefix = "remote")
-public class RemoteServerConfig {
+public interface RemoteServerConfig {
 
-    private String server;
-    private Integer serverResolution;
-    private String serverConnectionProtocol;
-    private Integer workerThreads;
+    String server();
 
-    public String getServer() {
-        return server;
-    }
+    Integer serverResolution();
 
-    public void setServer(String server) {
-        this.server = server;
-    }
+    String serverConnectionProtocol();
 
-    public Integer getServerResolution() {
-        return serverResolution;
-    }
+    Integer workerThreads();
 
-    public void setServerResolution(Integer serverResolution) {
-        this.serverResolution = serverResolution;
-    }
-
-    public String getServerConnectionProtocol() {
-        return serverConnectionProtocol;
-    }
-
-    public void setServerConnectionProtocol(String serverConnectionProtocol) {
-        this.serverConnectionProtocol = serverConnectionProtocol;
-    }
-
-    public Integer getWorkerThreads() {
-        return workerThreads;
-    }
-
-    public void setWorkerThreads(Integer workerThreads) {
-        this.workerThreads = workerThreads;
-    }
+    Integer pullIntervalDuration();
 }

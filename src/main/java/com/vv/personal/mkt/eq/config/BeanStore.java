@@ -24,14 +24,14 @@ public class BeanStore {
 
     @Bean
     public HoldingsReader HoldingsReader() {
-        return new HoldingsReader(equitiesMarketConfig.getHoldingsFileLocation());
+        return new HoldingsReader(equitiesMarketConfig.holdingsFileLocation());
     }
 
     @Bean(destroyMethod = "destroyExecutor")
     public NetworkEngine NetworkEngine() {
         return new NetworkEngine(
-                String.format("%s://%s", remoteServerConfig.getServerConnectionProtocol(), remoteServerConfig.getServer()),
-                remoteServerConfig.getWorkerThreads()
+                String.format("%s://%s", remoteServerConfig.serverConnectionProtocol(), remoteServerConfig.server()),
+                remoteServerConfig.workerThreads()
         );
     }
 
@@ -41,17 +41,17 @@ public class BeanStore {
 
         return new OrchestratorEngine(
                 holdings,
-                equitiesMarketConfig.getOrchestratorWorkerThreads(),
-                equitiesMarketConfig.getExecutionIntervalDuration(),
-                remoteServerConfig.getServerResolution(),
+                equitiesMarketConfig.orchestrationExecutionIntervalDuration(),
+                remoteServerConfig.serverResolution(),
                 NetworkEngine(),
+                remoteServerConfig.pullIntervalDuration(),
                 ComputeEngine()
         );
     }
 
     @Bean(destroyMethod = "destroyExecutor")
     public ComputeEngine ComputeEngine() {
-        return new ComputeEngine(equitiesMarketConfig.getComputeWorkerThreads());
+        return new ComputeEngine(equitiesMarketConfig.computeWorkerThreads());
     }
 
 }

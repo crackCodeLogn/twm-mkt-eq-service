@@ -1,6 +1,5 @@
 package com.vv.personal.mkt.eq.engine;
 
-import com.google.common.util.concurrent.AtomicDouble;
 import com.vv.personal.mkt.eq.modes.Mode;
 import com.vv.personal.mkt.eq.responses.PnL;
 import com.vv.personal.twm.artifactory.generated.equitiesMarket.EquitiesMarketProto;
@@ -23,28 +22,34 @@ public class OrchestratorEngine {
     private final NetworkEngine networkEngine;
     private final ComputeEngine computeEngine;
     private final Integer resolution;
-    private final Integer executionIntervalInSeconds;
+    private final Integer orchestrationExecutionIntervalSeconds;
+    private final Integer networkPullIntervalSeconds;
 
     private final EquitiesMarketProto.Holdings holdings;
-    private final ScheduledExecutorService scheduledEngine;
+    private final ScheduledExecutorService orchestrationScheduledEngine;
+    private final ScheduledExecutorService networkScheduledEngine;
 
-    public OrchestratorEngine(EquitiesMarketProto.Holdings holdings, int workerThreadCount, int executionIntervalInSeconds, Integer resolution,
-                              NetworkEngine networkEngine, ComputeEngine computeEngine) {
+    public OrchestratorEngine(EquitiesMarketProto.Holdings holdings, int orchestrationExecutionIntervalInSeconds, Integer resolution,
+                              NetworkEngine networkEngine, int networkPullIntervalSeconds, ComputeEngine computeEngine) {
         this.holdings = holdings;
         this.resolution = resolution;
-        this.executionIntervalInSeconds = executionIntervalInSeconds;
+        this.orchestrationExecutionIntervalSeconds = orchestrationExecutionIntervalInSeconds;
+        this.networkPullIntervalSeconds = networkPullIntervalSeconds;
         this.networkEngine = networkEngine;
         this.computeEngine = computeEngine;
 
-        scheduledEngine = Executors.newScheduledThreadPool(workerThreadCount);
-        log.info("Initiating scheduled-engine with execution interval of {} seconds", executionIntervalInSeconds);
-        scheduledEngine.scheduleWithFixedDelay(this::invokeEngine, executionIntervalInSeconds, executionIntervalInSeconds, TimeUnit.SECONDS);
+        log.info("Firing up scheduled-orchestration-engine with execution interval of {} seconds", orchestrationExecutionIntervalInSeconds);
+        orchestrationScheduledEngine = Executors.newSingleThreadScheduledExecutor();
+        orchestrationScheduledEngine.scheduleWithFixedDelay(this::invokeEngine, orchestrationExecutionIntervalInSeconds, orchestrationExecutionIntervalInSeconds, TimeUnit.SECONDS);
+        log.info("Initiating scheduled-network-engine with execution interval of {} seconds", networkPullIntervalSeconds);
+        networkScheduledEngine = Executors.newSingleThreadScheduledExecutor();
+        networkScheduledEngine.scheduleWithFixedDelay(this::invokeEngine, networkPullIntervalSeconds, networkPullIntervalSeconds, TimeUnit.SECONDS);
         //initial delay as Starter calls invokeEngine() directly on startup
     }
 
     public void invokeEngine() {
         long endTime = System.currentTimeMillis() / 1000 - 10;
-        long startTime = endTime - executionIntervalInSeconds;
+        long startTime = endTime - orchestrationExecutionIntervalSeconds;
 
         Mode mode;
         int hourOfDay = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
@@ -81,6 +86,22 @@ public class OrchestratorEngine {
         }
     }
 
+    public void invokeNetworkEngine() {
+        long endTime = System.currentTimeMillis() / 1000 - 10;
+        long startTime = endTime - networkPullIntervalSeconds;
+        Mode mode;
+        int hourOfDay = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        int minute = Calendar.getInstance().get(Calendar.MINUTE);
+        int time = hourOfDay * 100 + minute;
+        if (time >= 930 && time <= 1530) mode = Mode.INTRA;
+        else mode = Mode.HISTORIC;
+
+        mode = Mode.INTRA; //TODO -- forcing to INTRA for now, as it seems uncertain for HISTORIC
+
+        List<PnL> pnLS = networkEngine.invokeEngine(holdings, resolution, startTime, endTime, mode);
+
+    }
+
     static String inflateWithSpace(String symbol, int maxSymbolLength) {
         StringBuilder correctedSymbol = new StringBuilder(symbol);
         for (int i = 1; i <= maxSymbolLength - symbol.length(); i++) correctedSymbol.append(" ");
@@ -88,9 +109,9 @@ public class OrchestratorEngine {
     }
 
     public void destroyExecutor() {
-        if (scheduledEngine != null && !scheduledEngine.isShutdown()) {
+        if (networkScheduledEngine != null && !networkScheduledEngine.isShutdown()) {
             log.info("Shutting down scheduled orchestrator engine");
-            scheduledEngine.shutdown();
+            networkScheduledEngine.shutdown();
         }
     }
 

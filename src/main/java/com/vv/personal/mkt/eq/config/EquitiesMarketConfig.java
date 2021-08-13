@@ -7,42 +7,12 @@ import io.smallrye.config.ConfigMapping;
  * @since 27/07/21
  */
 @ConfigMapping(prefix = "equity")
-public class EquitiesMarketConfig {
+public interface EquitiesMarketConfig {
 
-    private String holdingsFileLocation;
-    private Integer orchestratorWorkerThreads;
-    private Integer computeWorkerThreads;
-    private Integer executionIntervalDuration;
+    String holdingsFileLocation();
 
-    public String getHoldingsFileLocation() {
-        return holdingsFileLocation;
-    }
+    Integer computeWorkerThreads();
 
-    public void setHoldingsFileLocation(String holdingsFileLocation) {
-        this.holdingsFileLocation = holdingsFileLocation;
-    }
+    Integer orchestrationExecutionIntervalDuration();
 
-    public Integer getOrchestratorWorkerThreads() {
-        return orchestratorWorkerThreads;
-    }
-
-    public void setOrchestratorWorkerThreads(Integer orchestratorWorkerThreads) {
-        this.orchestratorWorkerThreads = orchestratorWorkerThreads;
-    }
-
-    public Integer getExecutionIntervalDuration() {
-        return executionIntervalDuration;
-    }
-
-    public void setExecutionIntervalDuration(Integer executionIntervalDuration) {
-        this.executionIntervalDuration = executionIntervalDuration;
-    }
-
-    public Integer getComputeWorkerThreads() {
-        return computeWorkerThreads;
-    }
-
-    public void setComputeWorkerThreads(Integer computeWorkerThreads) {
-        this.computeWorkerThreads = computeWorkerThreads;
-    }
 }
