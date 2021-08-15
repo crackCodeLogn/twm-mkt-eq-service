@@ -1,14 +1,12 @@
 # twm-mkt-eq-service
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
-
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
-
 ## Tech Stack:
 
 1. Java 11
-2. Quarkus
-3. Lombok
+2. Quarkus (the Supersonic Subatomic Java Framework: https://quarkus.io/)
+3. OpenFeign
+4. OpenCsv
+5. Lombok
 
 ## Requirements
 
@@ -23,7 +21,7 @@ SBIN | 15 | 430.75
 
 4. Set a variable in your system for ```TWM_HOME_PARENT```, which defines a project structure defined in the ```twm-mkt-eq-service/bin/twm-mkt-eq-service.sh```
 5. Make sure you have java configured.
-6. Indian market only. This also considers the EMH - Efficient Market Hypothesis, which assumes that the stock price on NSE and BSE are the same.
+6. <b>Indian market only</b>. This also considers the EMH - Efficient Market Hypothesis, which assumes that the stock price on NSE and BSE are the same.
 
 ## Starting the application locally
 
@@ -33,7 +31,7 @@ SBIN | 15 | 430.75
 
 1. Ctrl + C the terminal where the twm-mkt-eq-service jar is running.
 
-## Output:
+## Output
 
 Based on the sample selected above, below is the output for the run:-
 
