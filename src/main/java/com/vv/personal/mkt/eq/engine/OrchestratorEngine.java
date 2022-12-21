@@ -27,7 +27,7 @@ public class OrchestratorEngine {
 
     private final EquitiesMarketProto.Holdings holdings;
     private final ScheduledExecutorService orchestrationScheduledEngine;
-    private final ScheduledExecutorService networkScheduledEngine;
+    private final ScheduledExecutorService networkAndWriteScheduledEngine;
 
     public OrchestratorEngine(EquitiesMarketProto.Holdings holdings, int orchestrationExecutionIntervalInSeconds, Integer resolution,
                               NetworkEngine networkEngine, int networkPullIntervalSeconds, ComputeEngine computeEngine) {
@@ -42,8 +42,8 @@ public class OrchestratorEngine {
         orchestrationScheduledEngine = Executors.newSingleThreadScheduledExecutor();
         orchestrationScheduledEngine.scheduleWithFixedDelay(this::invokeEngine, orchestrationExecutionIntervalInSeconds, orchestrationExecutionIntervalInSeconds, TimeUnit.SECONDS);
         log.info("Initiating scheduled-network-engine with execution interval of {} seconds", networkPullIntervalSeconds);
-        networkScheduledEngine = Executors.newSingleThreadScheduledExecutor();
-        networkScheduledEngine.scheduleWithFixedDelay(this::invokeEngine, networkPullIntervalSeconds, networkPullIntervalSeconds, TimeUnit.SECONDS);
+        networkAndWriteScheduledEngine = Executors.newSingleThreadScheduledExecutor();
+        networkAndWriteScheduledEngine.scheduleWithFixedDelay(this::invokeEngine, networkPullIntervalSeconds, networkPullIntervalSeconds, TimeUnit.SECONDS);
         //initial delay as Starter calls invokeEngine() directly on startup
     }
 
@@ -109,9 +109,9 @@ public class OrchestratorEngine {
     }
 
     public void destroyExecutor() {
-        if (networkScheduledEngine != null && !networkScheduledEngine.isShutdown()) {
+        if (networkAndWriteScheduledEngine != null && !networkAndWriteScheduledEngine.isShutdown()) {
             log.info("Shutting down scheduled orchestrator engine");
-            networkScheduledEngine.shutdown();
+            networkAndWriteScheduledEngine.shutdown();
         }
     }
 
